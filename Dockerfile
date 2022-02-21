@@ -1,14 +1,10 @@
-FROM scratch
-MAINTAINER Aleix Penella (aleix.penella [at] gmail.com)
+FROM golang:1.16 as builder
+WORKDIR /go/src/github.com/grid-dev/simple-go-helloworld
+COPY . .
+RUN go mod download
+RUN env GOOS=linux GOARCH=386 CGO_ENABLED=0 go build -o main .
 
-# set / as working dir
-WORKDIR /
-
-# copy de binary into container
-COPY simple-go-helloworld /
-
-# expose the port where web server is listen to
+FROM alpine:3.13.6
 EXPOSE 80
-
-# set binary as entrypoint
-ENTRYPOINT ["/simple-go-helloworld"]
+COPY --from=builder //go/src/github.com/grid-dev/simple-go-helloworld/main /bin
+CMD main

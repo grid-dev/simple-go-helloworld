@@ -1,4 +1,4 @@
-package release
+package main
 
 var (
 	Version, Commit string
